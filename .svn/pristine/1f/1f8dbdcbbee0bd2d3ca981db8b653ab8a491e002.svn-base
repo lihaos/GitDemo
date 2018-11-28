@@ -1,0 +1,66 @@
+package cn.ch.netem.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Many;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import cn.ch.netem.pojo.Page;
+import cn.ch.netem.pojo.User;
+import cn.ch.netem.pojo.UserExample;
+
+public interface UserMapper {
+	public Integer getUserCount(@Param("userCode")String userCode,@Param("userNmae")String userNmae,@Param("userType")Integer userType);
+	/***
+	 * <span style='color:red;'>登录时 用户可以通过账户 或者 邮箱进行登录</span>
+	 * 
+	 * @param userCode
+	 * @return
+	 */
+/*	@Select("select * from user where user_code=#{userCode} or user_email=#{userCode}")*/
+	User findUserByCode(@Param("userCode") String userCode);
+	
+	/***
+	 * <span style='color:red;'>//用户点击收到邮箱中的链接后 调用此方法 激活用户 将激活状态更变为1</span>
+	 * @param userCode
+	 * @return
+	 */
+	@Update("update user set status=1 where user_code=#{userCode}")
+	int activationUser(@Param("userCode")String userCode);
+	
+	/***
+	 * <span style='color:red;'>//注册时验证用户唯一</span>
+	 * @param userCode
+	 * @return
+	 */
+	@Select("select user_id from user where user_code=#{userCode} or user_email=#{userCode} or user_email=#{userEmail} or user_code=#{userCode}")
+	public User validateUnicode(@Param("userCode")String userCode,@Param("userEmail")String userEmail);
+     
+	List<User> findUserAll(@Param("userCode")String userCode,@Param("userNmae")String userNmae,@Param("page")Page page,@Param("userType")Integer userType);
+
+	long countByExample(UserExample example);
+
+	int deleteByExample(UserExample example);
+
+	int deleteByPrimaryKey(Integer userId);
+
+	int insert(User record);
+
+	int insertSelective(User record);
+
+	List<User> selectByExample(UserExample example);
+
+	User selectByPrimaryKey(Integer userId);
+
+	int updateByExampleSelective(@Param("record") User record, @Param("example") UserExample example);
+
+	int updateByExample(@Param("record") User record, @Param("example") UserExample example);
+
+	int updateByPrimaryKeySelective(User record);
+
+	int updateByPrimaryKey(User record);
+}

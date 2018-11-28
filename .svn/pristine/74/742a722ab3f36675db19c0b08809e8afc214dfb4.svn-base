@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ch.netem.mapper.TestPaperMapper">
+  <resultMap id="BaseResultMap" type="TestPaper">
+    <id column="test_paper_id" jdbcType="INTEGER" property="testPaperId" />
+    <result column="test_paper_level" jdbcType="INTEGER" property="testPaperLevel" />
+    <result column="question_quantity" jdbcType="INTEGER" property="questionQuantity" />
+    <result column="lastmodifiydate" jdbcType="TIMESTAMP" property="lastmodifiydate" />
+    <result column="test_paper_title" jdbcType="VARCHAR" property="testPaperTitle" />
+    <result column="sjId" jdbcType="INTEGER" property="subjectId" />
+    <!--association collection李浩  -->
+    <association property="subject" javaType="subject" >
+    <id property="subjectId" column="testsjId"/>
+    <result property="subjectName" column="subject_name"/>
+    </association>
+    
+    <collection property="questionList" ofType="question">
+    <id property="questionId" column="questionId_id"/>
+    <result property="type" column="type"/>
+    <result property="title" column="title"/>
+    <result property="questionLevel" column="question_level"/>
+    <result property="subjectId" column="subject_id"/>
+    <association property="subject" javaType="subject">
+    <id property="subjectId" column="subject_id"/>
+    <result property="subjectName" column="subject_name"/>
+    </association>
+    </collection>
+    
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    test_paper_id,subject_id as sjId, test_paper_level, question_quantity, lastmodifiydate,test_paper_title
+  </sql>
+  <select id="selectByExample" parameterType="TestPaperExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from test_paper
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from test_paper
+    where test_paper_id = #{testPaperId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from test_paper
+    where test_paper_id = #{testPaperId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="TestPaperExample">
+    delete from test_paper
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="TestPaper">
+    insert into test_paper (test_paper_id, score, subject_id, 
+      test_paper_level, question_quantity, lastmodifiydate
+      )
+    values (#{testPaperId,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{subjectId,jdbcType=INTEGER}, 
+      #{testPaperLevel,jdbcType=INTEGER}, #{questionQuantity,jdbcType=INTEGER}, #{lastmodifiydate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="TestPaper">
+    insert into test_paper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="testPaperId != null">
+        test_paper_id,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="subjectId != null">
+        subject_id,
+      </if>
+      <if test="testPaperLevel != null">
+        test_paper_level,
+      </if>
+      <if test="questionQuantity != null">
+        question_quantity,
+      </if>
+      <if test="lastmodifiydate != null">
+        lastmodifiydate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="testPaperId != null">
+        #{testPaperId,jdbcType=INTEGER},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null">
+        #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="testPaperLevel != null">
+        #{testPaperLevel,jdbcType=INTEGER},
+      </if>
+      <if test="questionQuantity != null">
+        #{questionQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="lastmodifiydate != null">
+        #{lastmodifiydate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="TestPaperExample" resultType="java.lang.Long">
+    select count(*) from test_paper
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update test_paper
+    <set>
+      <if test="record.testPaperId != null">
+        test_paper_id = #{record.testPaperId,jdbcType=INTEGER},
+      </if>
+      <if test="record.score != null">
+        score = #{record.score,jdbcType=INTEGER},
+      </if>
+      <if test="record.subjectId != null">
+        subject_id = #{record.subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="record.testPaperLevel != null">
+        test_paper_level = #{record.testPaperLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.questionQuantity != null">
+        question_quantity = #{record.questionQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastmodifiydate != null">
+        lastmodifiydate = #{record.lastmodifiydate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update test_paper
+    set test_paper_id = #{record.testPaperId,jdbcType=INTEGER},
+      score = #{record.score,jdbcType=INTEGER},
+      subject_id = #{record.subjectId,jdbcType=INTEGER},
+      test_paper_level = #{record.testPaperLevel,jdbcType=INTEGER},
+      question_quantity = #{record.questionQuantity,jdbcType=INTEGER},
+      lastmodifiydate = #{record.lastmodifiydate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="TestPaper">
+    update test_paper
+    <set>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null">
+        subject_id = #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="testPaperLevel != null">
+        test_paper_level = #{testPaperLevel,jdbcType=INTEGER},
+      </if>
+      <if test="questionQuantity != null">
+        question_quantity = #{questionQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="lastmodifiydate != null">
+        lastmodifiydate = #{lastmodifiydate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where test_paper_id = #{testPaperId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="TestPaper">
+    update test_paper
+    set score = #{score,jdbcType=INTEGER},
+      subject_id = #{subjectId,jdbcType=INTEGER},
+      test_paper_level = #{testPaperLevel,jdbcType=INTEGER},
+      question_quantity = #{questionQuantity,jdbcType=INTEGER},
+      lastmodifiydate = #{lastmodifiydate,jdbcType=TIMESTAMP}
+    where test_paper_id = #{testPaperId,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 以下为李浩手写 -->
+  <select id="getTestPaperList" parameterType="map" resultMap="BaseResultMap">
+    select
+    tp.test_paper_id, tp.subject_id as sjId,  tp.test_paper_level,  tp.question_quantity,  tp.lastmodifiydate, tp.test_paper_title,
+    sj.subject_id as testsjId,sj.subject_name,qs.question_id,qs.type,qs.title,qs.subject_id,qs.question_level
+    from 
+    test_paper tp,subject sj,test_paper_question tpqs,question qs
+    where 1=1
+    <if test="testPaperTitle!=null">
+    and tp.test_paper_title like CONCAT('%',#{testPaperTitle},'%')  
+    </if>
+    and tp.subject_id = sj.subject_id
+    and tp.test_paper_id = tpqs.test_paper_id
+    and qs.question_id = tpqs.question_id
+    GROUP BY tp.test_paper_id
+    limit #{pageNo},3
+  </select>
+  
+    <select id="getTestPaperCount"  resultType="int">
+    select
+    count(1)
+    from 
+    test_paper
+    where 1=1
+    <if test="testPaperTitle!=null">
+    and test_paper_title like CONCAT('%',#{testPaperTitle},'%')  
+    </if>
+  </select>
+</mapper>

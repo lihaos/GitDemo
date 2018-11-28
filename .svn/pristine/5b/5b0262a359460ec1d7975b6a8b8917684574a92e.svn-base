@@ -1,0 +1,108 @@
+package cn.ch.netem.pojo;
+
+import java.util.Date;
+import java.util.List;
+
+public class UserTestPaper {
+    private Integer userTestPaperId;
+
+    private Integer subjectId;
+
+    private Double score;
+
+    private Integer level;
+
+    private Integer questionQuantity;
+
+    private Integer userId;
+
+    private Date testDate;
+    
+    private String testPaperTitle;
+    
+    private List<UserTestPaperQuestion>  questionList;
+
+    private Subject subject;
+    
+    
+
+	public Subject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(Subject subject) {
+		this.subject = subject;
+	}
+
+	public List<UserTestPaperQuestion> getQuestionList() {
+		return questionList;
+	}
+
+	public void setQuestionList(List<UserTestPaperQuestion> questionList) {
+		this.questionList = questionList;
+	}
+
+	public String getTestPaperTitle() {
+		return testPaperTitle;
+	}
+
+	public void setTestPaperTitle(String testPaperTitle) {
+		this.testPaperTitle = testPaperTitle;
+	}
+
+	public Integer getUserTestPaperId() {
+        return userTestPaperId;
+    }
+
+    public void setUserTestPaperId(Integer userTestPaperId) {
+        this.userTestPaperId = userTestPaperId;
+    }
+
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public Integer getQuestionQuantity() {
+        return questionQuantity;
+    }
+
+    public void setQuestionQuantity(Integer questionQuantity) {
+        this.questionQuantity = questionQuantity;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Date getTestDate() {
+        return testDate;
+    }
+
+    public void setTestDate(Date testDate) {
+        this.testDate = testDate;
+    }
+}

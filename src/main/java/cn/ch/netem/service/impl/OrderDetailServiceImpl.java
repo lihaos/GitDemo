@@ -1,0 +1,21 @@
+package cn.ch.netem.service.impl;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import cn.ch.netem.mapper.OrderDetailMapper;
+import cn.ch.netem.pojo.OrderDetail;
+import cn.ch.netem.service.OrderDetailService;
+@Service
+public class OrderDetailServiceImpl implements OrderDetailService {
+	
+	@Autowired
+	private OrderDetailMapper orderDetailMapper;
+	@Override
+	public int insertSelective(OrderDetail record) {
+		// TODO Auto-generated method stub
+		return orderDetailMapper.insertSelective(record);
+	}
+
+}

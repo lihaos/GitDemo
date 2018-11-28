@@ -1,0 +1,5 @@
+mail.username=loveluzhilong@qq.com
+mail.password=ywhopgxysrkkbbbb
+mail.host=smtp.qq.com
+mail.testConnection=false
+mail.protocol=smtp

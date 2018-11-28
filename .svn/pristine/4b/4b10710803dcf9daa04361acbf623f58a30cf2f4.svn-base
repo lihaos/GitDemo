@@ -1,0 +1,48 @@
+spring:
+ redis:
+    host: 192.168.43.79
+    port: 6379
+    database: 1
+    timeout: 3000
+ thymeleaf:
+   # enabled: false
+    cache: false
+   # prefix: templates/
+   # suffix: .html
+ datasource:
+    username: root
+    password: 123
+    url : jdbc:mysql://localhost:3306/netem_manager
+ mail:
+    protocol: smtp
+    password: itlngaylwuatijfb
+    host: smtp.qq.com
+    username: 1127126139@qq.com
+    testConnection: false
+    properties: {mail.smtp.auth: true} # mvc:
+  #  static-path-pattern: /templates/**  #static-path-pattern:classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,
+    #type: com.alibaba.druid.pool.DruidDataSource  #1127126139@qq.com   18318040607
+ 
+server:  port: 80
+mybatis:  type-aliases-package: cn.ch.netem.pojo
+  configuration:    auto-mapping-behavior: FULL
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl 
+  #shiro 权限分配  
+shiro:
+   session:
+      #shiro session超时 设置 20分钟
+       globalSessionTimeout: 1200000
+   shiroFilter:
+      #shiro权限分配
+       loginUrl: /tologin
+       successUrl: /mian
+       unauthorizedUrl: /login
+     #  filterChainDefinitionMap: {
+     #  /bakmain: 'roles[superadmin]',
+      # /tologin: logout,
+       #/dologin: anon,
+      # /login: anon,
+      # /main: anon,
+      # /**: authc}
+
+         

@@ -1,0 +1,149 @@
+package cn.ch.netem.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import cn.ch.netem.pojo.User;
+import cn.ch.netem.pojo.UserTestPaper;
+import cn.ch.netem.pojo.UserTestPaperQuestion;
+import cn.ch.netem.service.UserTestPaperQuestionService;
+import cn.ch.netem.service.UserTestPaperService;
+
+@Controller
+public class UserTestPaperController {
+
+	@Autowired
+	private UserTestPaperService userTestPaperService;
+	@Autowired
+	private UserTestPaperQuestionService userTestPaperQuestionService;
+	
+	/*@ResponseBody
+	@RequestMapping("userTestPaper1")
+	public String addUserTestPaper1(@RequestBody List<UserTestPaper> testpaper,HttpSession session) {
+		UserTestPaper userTestPaper = testpaper.get(0);
+		userTestPaper.setTestDate(new Date());
+		boolean flag = userTestPaperService.addUserTestPaper(userTestPaper);
+		List<UserTestPaperQuestion> questionList = userTestPaper.getQuestionList();
+		if (flag) {
+			int count = 0;
+			for (UserTestPaperQuestion userTestPaperQuestion : questionList) {
+				userTestPaperQuestion.setUserTestPaperId(userTestPaper.getUserTestPaperId());
+				if (userTestPaperQuestionService.addUserTestPaperQuestion(userTestPaperQuestion)) {
+					count++;
+				}
+			}
+			if (count==10) {
+				session.setAttribute("userTestPaperModel", userTestPaper);
+				return "";
+			}
+		}
+		return "error";
+		
+	}
+	@RequestMapping("testResult")
+	public String testResult() {
+		return "/pre/testResult";
+		
+	}*/
+	
+	
+	/***
+	 * 添加用户试卷
+	 * @param testpaper
+	 * @return
+	 */
+	@RequestMapping("userTestPaper")
+	public String addUserTestPaper(UserTestPaper testpaper,HttpSession session) {
+		session.removeAttribute("userTestPaper");
+		User user=(User) SecurityUtils.getSubject().getPrincipal();
+		testpaper.setTestDate(new Date());
+		testpaper.setUserId(user.getUserId());
+		if (session.getAttribute("action").equals("random")) {
+			testpaper.setTestPaperTitle("随机测试"+new Date());
+		}		
+		boolean flag = userTestPaperService.addUserTestPaper(testpaper);
+		List<UserTestPaperQuestion> questionList = testpaper.getQuestionList();
+		if (flag) {
+			int count = 0;
+			for (UserTestPaperQuestion userTestPaperQuestion : questionList) {
+				userTestPaperQuestion.setUserTestPaperId(testpaper.getUserTestPaperId());
+				if (userTestPaperQuestionService.addUserTestPaperQuestion(userTestPaperQuestion)) {
+					count++;
+				}
+			}
+			if (count==10) {
+				session.setAttribute("userTestPaper", testpaper);
+				return "redirect:testResult";
+			}
+		}
+		return "/pre/error";
+	}
+	
+	/***
+	 * 显示测试结果
+	 * @param session
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("testResult")
+	public String testResult(HttpSession session,Model model) {
+		UserTestPaper userTestPaper = (UserTestPaper) session.getAttribute("userTestPaper");
+		model.addAttribute("userTestPaper",userTestPaper);
+		return "/pre/testResult";
+	}
+	
+	
+	/***
+	 * 查看结果解析
+	 * @param paperId
+	 * @param position
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("selectTestResult")
+	private String selectTestResult(@RequestParam(value="paperId",required = false) int paperId,
+			@RequestParam(value="position",required = false) String position,
+			Model model) {
+		
+		UserTestPaper userTestPaper = userTestPaperService.selectByUserTestPaperId(paperId);
+		model.addAttribute("testPaperResult", userTestPaper);
+		model.addAttribute("position",position);
+		return "/pre/testPaperResult";
+	}
+	
+	/***
+	 * 我的试卷列表
+	 * @param userId
+	 * @param paperTitle
+	 * @param pageNo
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("selectMyTestPaper")
+	private String selectMyTestPaper(
+			@RequestParam(value="paperTitle",required=false)String paperTitle,
+			@RequestParam(value="pageNo",required=false,defaultValue="1")int pageNo,
+			Model model) {
+		User user=(User) SecurityUtils.getSubject().getPrincipal();
+		
+		List<UserTestPaper> userTestPaperList = userTestPaperService.selectByUserId(paperTitle, pageNo, user.getUserId());
+		int paperCount = userTestPaperService.getUserTestPaperCount(paperTitle, user.getUserId());
+		int pageTotal = paperCount%3==0?paperCount/3:paperCount/3+1;
+		model.addAttribute("paperList", userTestPaperList);
+		model.addAttribute("pageNum", pageNo);
+		model.addAttribute("pageTotal", pageTotal);
+		model.addAttribute("paperSize", userTestPaperList.size());
+		model.addAttribute("paperTitle", paperTitle);
+		return "/pre/myTestPaper";
+	}
+	
+}

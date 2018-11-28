@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ch.netem.mapper.UserTestPaperQuestionMapper">
+  <resultMap id="BaseResultMap" type="UserTestPaperQuestion">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="question_id" jdbcType="INTEGER" property="questionId" />
+    <result column="user_test_paper_id" jdbcType="INTEGER" property="userTestPaperId" />
+    <result column="answer_id" jdbcType="INTEGER" property="answerId" />
+    <result column="isTrue" jdbcType="INTEGER" property="istrue" />
+    
+    <association property="question" javaType="question">
+    <id column="question_id" jdbcType="INTEGER" property="questionId"/>
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="question_level" jdbcType="INTEGER" property="questionLevel" />
+    </association>
+    
+    <collection property="answerList" ofType="answer">
+    <id property="answerId" column="answer_id"/>
+    <result property="questionId" column="question_id"/>
+    <result property="content" column="content"/>
+    <result property="istrue" column="isTrue"/>
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, question_id, user_test_paper_id, answer_id, isTrue
+  </sql>
+  <select id="selectByExample" parameterType="UserTestPaperQuestionExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_test_paper_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_test_paper_question
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_test_paper_question
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="UserTestPaperQuestionExample">
+    delete from user_test_paper_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="UserTestPaperQuestion">
+    insert into user_test_paper_question (question_id, user_test_paper_id, 
+      answer_id, isTrue)
+    values (#{questionId,jdbcType=INTEGER}, #{userTestPaperId,jdbcType=INTEGER}, 
+      #{answerId,jdbcType=INTEGER}, #{istrue,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="UserTestPaperQuestion">
+    insert into user_test_paper_question
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="questionId != null">
+        question_id,
+      </if>
+      <if test="userTestPaperId != null">
+        user_test_paper_id,
+      </if>
+      <if test="answerId != null">
+        answer_id,
+      </if>
+      <if test="istrue != null">
+        isTrue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="questionId != null">
+        #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="userTestPaperId != null">
+        #{userTestPaperId,jdbcType=INTEGER},
+      </if>
+      <if test="answerId != null">
+        #{answer_id,jdbcType=VARCHAR},
+      </if>
+      <if test="istrue != null">
+        #{istrue,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="UserTestPaperQuestionExample" resultType="java.lang.Long">
+    select count(*) from user_test_paper_question
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user_test_paper_question
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.questionId != null">
+        question_id = #{record.questionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userTestPaperId != null">
+        user_test_paper_id = #{record.userTestPaperId,jdbcType=INTEGER},
+      </if>
+      <if test="record.answerId != null">
+        answer_id = #{record.answer_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.istrue != null">
+        isTrue = #{record.istrue,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user_test_paper_question
+    set id = #{record.id,jdbcType=INTEGER},
+      question_id = #{record.questionId,jdbcType=INTEGER},
+      user_test_paper_id = #{record.userTestPaperId,jdbcType=INTEGER},
+      answer_id = #{record.answer_id,jdbcType=VARCHAR},
+      isTrue = #{record.istrue,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="UserTestPaperQuestion">
+    update user_test_paper_question
+    <set>
+      <if test="questionId != null">
+        question_id = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="userTestPaperId != null">
+        user_test_paper_id = #{userTestPaperId,jdbcType=INTEGER},
+      </if>
+      <if test="answerId != null">
+        answer_id = #{answer_id,jdbcType=VARCHAR},
+      </if>
+      <if test="istrue != null">
+        isTrue = #{istrue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="UserTestPaperQuestion">
+    update user_test_paper_question
+    set question_id = #{questionId,jdbcType=INTEGER},
+      user_test_paper_id = #{userTestPaperId,jdbcType=INTEGER},
+      answer_id = #{answer_id,jdbcType=VARCHAR},
+      isTrue = #{istrue,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <!-- 手打-->
+   <select id="getQuestionByTestId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	SELECT
+	utpq.`id`,utpq.`question_id`,utpq.`user_test_paper_id`,utpq.`answer_id`,utpq.`isTrue`,
+	qs.`question_id`,qs.`type`,qs.`title`,qs.`subject_id`,qs.`question_level`,
+	asr.`answer_id`,asr.`question_id`,asr.`content`,asr.`isTrue`
+	FROM `user_test_paper_question` utpq,`question` qs,answer asr
+	WHERE utpq.`question_id`=qs.`question_id`
+	AND qs.`question_id`=asr.`question_id`
+	AND utpq.`user_test_paper_id`=#{userTestPaperId}
+  </select>
+  
+</mapper>

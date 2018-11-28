@@ -1,0 +1,91 @@
+package cn.ch.netem.configuration;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+@Configuration
+public class WebmvcConfiguration extends WebMvcConfigurationSupport {
+
+	@Override
+	protected void addViewControllers(ViewControllerRegistry registry) {
+		// TODO Auto-generated method stub
+		registry.addViewController("/login").setViewName("/pre/login.html");
+		registry.addViewController("/tologin").setViewName("/pre/login.html");
+		registry.addViewController("/bakmain").setViewName("/backstage/main.html");
+		registry.addViewController("/navlist").setViewName("/backstage/nav.html");
+		registry.addViewController("/navindex").setViewName("/backstage/index.html");
+		registry.addViewController("/main").setViewName("/pre/index.html");
+		registry.addViewController("/toregister").setViewName("/pre/register.html");
+		registry.addViewController("/userList").setViewName("/backstage/userList.html");
+		registry.addViewController("/adminList").setViewName("/backstage/adminList.html");
+		registry.addViewController("/addAdmin").setViewName("/backstage/add_update_user.html");
+		//adminList
+		registry.addViewController("/questionList").setViewName("/backstage/questionList.html");
+		registry.addViewController("/PostManagement").setViewName("/backstage/PostManagement.html");
+		registry.addViewController("/testPaperList").setViewName("/backstage/testPaperList.html");
+	}
+
+	@Override
+	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+		// TODO Auto-generated method stub
+		registry.addResourceHandler("/pre/**").addResourceLocations("classpath:templates/pre/");
+		registry.addResourceHandler("/backstage/css/**").addResourceLocations(""
+				+ "classpath:templates/backstage/css/");
+		registry.addResourceHandler("/backstage/img/**").addResourceLocations(""
+				+ "classpath:templates/backstage/img/");
+		registry.addResourceHandler("/backstage/js/**").addResourceLocations(""
+				+ "classpath:templates/backstage/js/");
+		registry.addResourceHandler("/backstage/lang/**").addResourceLocations(""
+				+ "classpath:templates/backstage/lang/");
+		registry.addResourceHandler("/backstage/umeditor/**","/assets/**").addResourceLocations(""
+				+ "classpath:templates/backstage/umeditor/","classpath:templates/assets/");
+		/*registry.addResourceHandler("/assets/**").addResourceLocations(""
+				+ "classpath:templates/backstage/umeditor/");*/
+		super.addResourceHandlers(registry);
+	}
+
+/*	@Override
+	protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		FastJsonHttpMessageConverter  fastJsonHttpMessageConverter= new FastJsonHttpMessageConverter();
+		fastJsonHttpMessageConverter.setCharset(Charset.forName("utf-8"));
+		fastJsonHttpMessageConverter.setFeatures(SerializerFeature.WriteDateUseDateFormat);
+		List<MediaType> list = new ArrayList<MediaType>();
+		list.add(MediaType.APPLICATION_JSON_UTF8);
+		fastJsonHttpMessageConverter.setSupportedMediaTypes(list);
+		converters.add(fastJsonHttpMessageConverter);
+	}
+	*/
+	@Bean
+	public HttpMessageConverters httpMessageConverters ()
+	{
+		FastJsonHttpMessageConverter  fastJsonHttpMessageConverter= new FastJsonHttpMessageConverter();
+		fastJsonHttpMessageConverter.setCharset(Charset.forName("utf-8"));
+		fastJsonHttpMessageConverter.setFeatures(SerializerFeature.WriteDateUseDateFormat);
+		List<MediaType> list = new ArrayList<MediaType>();
+		list.add(MediaType.APPLICATION_JSON_UTF8);
+		fastJsonHttpMessageConverter.setSupportedMediaTypes(list);
+		HttpMessageConverters httpMessageConverters = new HttpMessageConverters(fastJsonHttpMessageConverter);
+		return httpMessageConverters;
+	}
+	
+	
+	
+	
+	
+	
+}

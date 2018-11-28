@@ -1,0 +1,52 @@
+package cn.ch.netem.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import cn.ch.netem.pojo.Page;
+import cn.ch.netem.pojo.Product;
+import cn.ch.netem.pojo.ProductExample;
+
+public interface ProductMapper {
+    long countByExample(ProductExample example);
+
+    int deleteByExample(ProductExample example);
+
+    int deleteByPrimaryKey(Integer productId);
+
+    int insert(Product record);
+
+    int insertSelective(Product record);
+
+    List<Product> selectByExample(ProductExample example);
+    //
+    Product selectByPrimaryKey(Integer productId);
+
+    int updateByExampleSelective(@Param("record") Product record, @Param("example") ProductExample example);
+
+    int updateByExample(@Param("record") Product record, @Param("example") ProductExample example);
+
+    int updateByPrimaryKeySelective(Product record);
+
+    int updateByPrimaryKey(Product record);
+    /**
+     * 查看产品列表
+     * **/
+    List<Product> selectAll(@Param("page")int page,@Param("pageNum")int pageNum);
+    
+    /**
+ 	* 查看产品列表2
+ 	* **/
+	 List<Product> selectAll2(@Param("page")Page page,@Param("productName")String productName);
+    /**
+     * 查看单个产品详细详细
+     * **/
+    Product selectOne(Integer productId);
+    /**
+     * 删除产品
+     * **/
+    public int deleteProduct();
+    //统计个数
+    int countProduct(String productName);
+}

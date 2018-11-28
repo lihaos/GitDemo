@@ -1,0 +1,75 @@
+package cn.ch.netem.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import cn.ch.netem.mapper.OrderMapper;
+import cn.ch.netem.pojo.Order;
+import cn.ch.netem.pojo.OrderDetail;
+import cn.ch.netem.pojo.Product;
+import cn.ch.netem.pojo.User;
+import cn.ch.netem.service.OrderDetailService;
+
+@Controller
+public class OrderContoller {
+
+	
+	@Autowired
+	private OrderMapper orderMapper;
+	
+	@Autowired
+	private OrderDetailService orderDetailService;
+	private List<OrderDetail> list = new ArrayList<OrderDetail>();
+	private double costAll=0;
+	
+	@RequestMapping("/dome123")
+	String  selectProduct(@RequestParam(defaultValue="1")int userId,Model model) {
+		/*List<Product>  list = orderMapper.getOrderDetail(userId);
+		for (Product order : list) {
+			System.out.println(order.getProductName());
+		}*/
+		model.addAttribute("list",list);
+		return "/pre/wmTest";
+	}
+	//User user=(User) SecurityUtils.getSubject().getPrincipal();
+	//插入订单号
+	@RequestMapping("/AddOrder")
+	String AddOrder(@RequestParam("quantity")int quantity,@RequestParam("price")double price,List<OrderDetail> products,Model model){
+		//下单时间  订单号 自己生成
+		User user=(User) SecurityUtils.getSubject().getPrincipal();
+		Order order = new Order();
+		order.setUserId(user.getUserId());
+		order.setUsername(user.getUserName());
+		order.setUseraddress(user.getUserAddress());
+		order.setCreatetime(new Date());//时间可能存在问题
+		//order.setCost(cost);
+		order.setSerialnumber(OrderContoller.getRandomString());
+		int key =orderMapper.insertSelective(order);
+		/*for (OrderDetail orderDetail2 : products) {
+			orderDetail2.setCost(orderDetail2.getQuantity()*orderDetail2.getProduct().getPrice());
+			orderDetail2.setOrderId(key);
+			orderDetailService.insert(orderDetail2);
+		}*/
+		return "/pre/productList";
+	}
+	//生成随机订单号
+	public static  String getRandomString(){
+	     String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	     Random random=new Random();
+	     StringBuffer sb=new StringBuffer();
+	     for(int i=0;i<8;i++){
+	       int number=random.nextInt(62);
+	       sb.append(str.charAt(number));
+	     }
+	     return sb.toString();
+	 }
+}

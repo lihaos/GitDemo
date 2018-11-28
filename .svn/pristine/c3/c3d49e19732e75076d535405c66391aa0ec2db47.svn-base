@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link th:href="@{/backstage/css/style.css}" rel="stylesheet"
+	type="text/css" href="css/style.css" />
+<link th:href="@{/backstage/css/WdatePicker.css}" rel="stylesheet"
+	type="text/css" href="css/WdatePicker.css" />
+<link th:href="@{/backstage/css/skin_/table.css}" rel="stylesheet"
+	type="text/css" href="css/skin_/table.css" />
+<link th:href="@{/backstage/css/jquery.grid.css}" rel="stylesheet"
+	type="text/css" href="css/jquery.grid.css" />
+
+
+<title>用户管理</title>
+</head>
+
+<body>
+	<div id="container">
+		<div id="hd"></div>
+		<div id="bd">
+			<div id="main">
+				<div class="search-box ue-clear">
+					<div class="search-area">
+
+						<div class="kv-item ue-clear">
+							<label>用户2名:</label>
+							<div class="kv-item-content">
+								<input type="text" id="productName"></input>
+							</div>
+						</div>
+					</div>
+					<div class="search-button">
+						<input class="button" type="button" value="搜索一下" onclick="findUser()"/>
+					</div>
+				</div>
+
+				<div class="table">
+					<div class="opt ue-clear">
+						<span class="sortarea"> <span class="sort"> <label>排序：</label>
+								<span class="name"> <i class="icon"></i> <span
+									class="text">名称</span>
+							</span>
+						</span> <i class="list"></i> <i class="card"></i>
+						</span> <span class="optarea"> <a href="javascript:;" class="add">
+								<i class="icon"></i> <span class="text">添加</span>
+						</a> <a href="javascript:;" class="delete"> <i class="icon"></i> <span
+								class="text">删除</span>
+						</a>
+
+
+						</span>
+					</div>
+
+					<div class="grid"></div>
+
+					<div class="pagination">
+					
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script th:src="@{/backstage/js/jquery.js}" type="text/javascript"
+	src="js/jquery.js"></script>
+<script th:src="@{/backstage/js/global.js}" type="text/javascript"
+	src="js/global.js"></script>
+<script th:src="@{/backstage/js/jquery.select.js}"
+	type="text/javascript" src="js/jquery.select.js"></script>
+<script th:src="@{/backstage/js/core.js}" type="text/javascript"
+	src="js/core.js"></script>
+<script th:src="@{/backstage/js/jquery.pagination.js}"
+	type="text/javascript" src="js/jquery.pagination.js"></script>
+<script th:src="@{/backstage/js/jquery.grid.js}" type="text/javascript"
+	src="js/jquery.grid.js"></script>
+<script th:src="@{/backstage/js/WdatePicker.js}" type="text/javascript"
+	src="js/WdatePicker.js"></script>
+<script type="text/javascript" th:inline="javascript">
+$(function(){
+	alert(1);
+	/* findUser(1); */
+})
+	/* function findUser(currentPage) {
+		$.ajax({
+			url:[[@{/findPproduct}]],
+			dataType:"json",
+			data:"productName="+$("#productName").val()+"&page="+currentPage, 
+			type:"post",
+			success:function(result){
+				loadList(result.users);
+				$('.pagination').pagination((result.page.pageCount*10), {
+					callback : function(currentPage) {
+						findUser((currentPage+1))
+					},
+					display_msg : false,
+					current_page: currentPage-1,
+					
+				});
+			}
+		});
+		
+	} */
+	$('select').select();
+	var head = [ {
+		label : 'ID',
+		width : 100,
+		sortable : 'default',
+		name : 'productId'
+	}, {
+		label : '产品名称',
+		width : 150,
+		sortable : 'default',
+		name : 'productName'
+	}, {
+		label : '产品描述',
+		width : 150
+		sortable : 'default',
+		name : 'description'
+	}, {
+		label : '产品价格',
+		width : 150
+		sortable : 'default',
+		name : 'price'
+	}, {
+		label : '产品图片',
+		width : 120
+		sortable : 'default',
+		name : 'filename'
+	}];
+
+	var oper = [ {
+		label : '删除',
+		onclick : function() {
+			alert('删除');
+		}
+	}, {
+		label : '编辑',
+		onclick : function() {
+			alert('编辑')
+		}
+	} ]
+
+
+	
+	function loadList(objList){
+		var arrr= new Array();
+		$(objList).each(function(){
+			var $obj=this
+		  var a =[$obj.productId,$obj.productName,$obj.description,$obj.price,$obj.filename;
+			arrr.push(a)
+		});
+		
+		$('.grid').Grid({
+			thead : head,
+			tbody : null,
+			height : 250,
+			checkbox : {
+				single : true
+			},
+			operator : {
+				type : "normal",
+				width : 100
+			},
+			sortCallBack : function(name, index, type) {
+				alert(name + "," + index + ',' + type);
+			}
+
+		});
+		
+			$('.grid').Grid('setData', arrr, head);
+	      
+		
+	}
+	 
+	/* $('.grid').Grid('addLoading'); */
+
+	/// 模拟异步
+/* 	setTimeout(function() {
+		$('.grid').Grid('setData', tbody, head);
+	}, 2000) */
+
+	
+
+	$('.search-box input[type=radio]').click(function(e) {
+		if ($(this).prop('checked')) {
+			if ($(this).attr('data-define') === 'define') {
+				$('.define-input').show();
+			} else {
+				$('.define-input').hide();
+			}
+		}
+	});
+</script>
+</html>

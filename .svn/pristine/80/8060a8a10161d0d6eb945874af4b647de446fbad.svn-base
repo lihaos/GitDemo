@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link th:href="@{/backstage/css/style.css}" rel="stylesheet"
+	type="text/css" href="css/style.css" />
+<link th:href="@{/backstage/css/WdatePicker.css}" rel="stylesheet"
+	type="text/css" href="css/WdatePicker.css" />
+<link th:href="@{/backstage/css/skin_/table.css}" rel="stylesheet"
+	type="text/css" href="css/skin_/table.css" />
+<link th:href="@{/backstage/css/jquery.grid.css}" rel="stylesheet"
+	type="text/css" href="css/jquery.grid.css" />
+
+
+<title>用户管理</title>
+
+<style type="text/css">
+
+.buttonCss { /* 按钮美化 */
+	width: 50px; /* 宽度 */
+	height: 30px; /* 高度 */
+	border-width: 0px; /* 边框宽度 */
+	border-radius: 3px; /* 边框半径 */
+	background: #1E90FF; /* 背景颜色 */
+	cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
+	outline: none; /* 不显示轮廓线 */
+	font-family: Microsoft YaHei; /* 设置字体 */
+	color: white; /* 字体颜色 */
+	font-size: 17px; /* 字体大小 */
+}
+.buttonCss:hover { /* 鼠标移入按钮范围时改变颜色 */
+	background: #5599FF;
+}
+</style>
+</head>
+
+<body>
+	<div id="container">
+		<div id="hd"></div>
+		<div id="bd">
+			<div id="main">
+				<div class="search-box ue-clear">
+					<div class="search-area">
+
+						<div class="kv-item ue-clear">
+							<label>用户名:</label>
+							<div class="kv-item-content">
+								<input type="text" id="title"></input>
+							</div>
+						</div>
+					</div>
+					<div class="search-button">
+						<input class="button" type="button" value="搜索一下" onclick="Note(1)"/>
+					</div>
+				</div>
+
+				<div class="table">
+					<div class="opt ue-clear">
+						<span class="sortarea"> <span class="sort"> <label>排序：</label>
+								<span class="name"> <i class="icon"></i> <span
+									class="text">名称</span>
+							</span>
+						</span> <i class="list"></i> <i class="card"></i>
+						</span> <span class="optarea"> <a href="javascript:;" class="add">
+								<i class="icon"></i> <span class="text">添加</span>
+						</a> <a href="javascript:;" class="delete"> <i class="icon"></i> <span
+								class="text">删除</span>
+						</a>
+
+
+						</span>
+					</div>
+
+					<div class="grid"></div>
+
+					<div class="pagination">
+					
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script th:src="@{/backstage/js/jquery.js}" type="text/javascript"
+	src="js/jquery.js"></script>
+<script th:src="@{/backstage/js/global.js}" type="text/javascript"
+	src="js/global.js"></script>
+<script th:src="@{/backstage/js/jquery.select.js}"
+	type="text/javascript" src="js/jquery.select.js"></script>
+<script th:src="@{/backstage/js/core.js}" type="text/javascript"
+	src="js/core.js"></script>
+<script th:src="@{/backstage/js/jquery.pagination.js}"
+	type="text/javascript" src="js/jquery.pagination.js"></script>
+<script th:src="@{/backstage/js/jquery.grid.js}" type="text/javascript"
+	src="js/jquery.grid.js"></script>
+<script th:src="@{/backstage/js/WdatePicker.js}" type="text/javascript"
+	src="js/WdatePicker.js"></script>
+<script type="text/javascript" th:inline="javascript">
+$(function(){
+	Note(1);
+})
+	function Note(currentPage) {
+		$.ajax({
+			url:[[@{/queryAllAjax}]],
+			dataType:"json",
+			data:"title="+$("#title").val()+"&currentPage="+currentPage, 
+			type:"post",
+			success:function(result){
+				loadList(result.list,result.page);
+				$('.pagination').pagination((result.page.pageCount*10), {
+					callback : function(currentPage) {
+						Note((currentPage+1)) 
+					},
+					display_msg : false,
+					current_page: currentPage-1,
+					
+				});
+			}
+		});
+		
+	}
+	$('select').select();
+	var head = [ {
+		label : '帖子ID',
+		width : 100,
+		sortable : 'default',
+		name : 'id'
+	}, {
+		label : '主题',
+		width : 150,
+		sortable : 'default',
+		name : 'name'
+	}, {
+		label : '内容',
+		width : 350
+	},  {
+		label : '审核',
+		width : 100
+	} ];
+
+
+
+	
+	function loadList(objList,ye){
+		var arrr= new Array();
+		$(objList).each(function(){
+			var $obj=this;
+			
+
+		  var a =[$obj.noteId,$obj.noteTitle,$obj.noteContent,$obj.toexamine==1?'已审核':'未审核',
+				  [ {
+						label : '删除',
+						onclick : function() {
+							if(confirm("你确定要删除吗？")==true){
+								   $.getJSON("/noteDelete?id="+$obj.noteId,null,function(pd){
+									   if(pd==1){
+										   alert("删除成功");
+										   Note(ye.currentPage);
+									   }
+									   
+								   })	 
+									 
+								 }
+						}
+					}, {
+						label : '编辑',
+						onclick : function() {
+							alertWin("编辑",400,300,$obj.noteId);
+						}
+					} ]
+				  ];
+			arrr.push(a)
+		});
+		
+		$('.grid').Grid({
+			thead : head,
+			tbody : null,
+			height : 250,
+			checkbox : {
+				single : true
+			},
+			operator : {
+				type : "normal",
+				width : 100
+			},
+			sortCallBack : function(name, index, type) {
+				alert(name + "," + index + ',' + type);
+			}
+
+		});
+		
+			$('.grid').Grid('setData', arrr, head);
+	      
+		
+	}
+	 
+	/* $('.grid').Grid('addLoading'); */
+
+	/// 模拟异步
+/* 	setTimeout(function() {
+		$('.grid').Grid('setData', tbody, head);
+	}, 2000) */
+
+	
+
+	$('.search-box input[type=radio]').click(function(e) {
+		if ($(this).prop('checked')) {
+			if ($(this).attr('data-define') === 'define') {
+				$('.define-input').show();
+			} else {
+				$('.define-input').hide();
+			}
+		}
+	});
+	
+	function alertWin(title, w, h,node){
+		var option = null;
+		var noteId = 0;
+		var questionForm = "";
+		$.ajax({
+	        url:[[@{/noteAjaxSelect}]],
+	        type: "POST",
+	        async: false,
+	        data:{id:node},
+	        success: function(data) {
+	        	noteId = data.noteId;
+	        	questionForm+="<input type='hidden' name='noteId' value='"+data.noteId+"'/>";
+	        
+	        	questionForm+="内容：<textarea rows='100' cols='40' name='title'>"+data.noteContent+"</textarea><br/>";
+	        	questionForm+="审核：<select name='questionLevel'>";
+	       
+                if(data.toexamine==1){
+                	questionForm+="<option selected>已审核</option>";
+                	
+                }else{
+                	
+                	questionForm+="<option value='"+data.toexamine+"'>审核</option>";
+                }
+	        	
+	        	questionForm+="</select><br/>";
+	        	
+	        },
+	        error: function() {
+	          alert("error");
+	        }
+	      });
+		
+		
+		
+		
+	    var titleheight = "22px"; // 提示窗口标题高度  
+	    var bordercolor = "#666699"; // 提示窗口的边框颜色  
+	    var titlecolor = "#FFFFFF"; // 提示窗口的标题颜色  
+	    var titlebgcolor = "#666699"; // 提示窗口的标题背景色 
+	    var bgcolor = "#FFFFFF"; // 提示内容的背景色 
+	     
+	    var iWidth = document.documentElement.clientWidth;  
+	    var iHeight = document.documentElement.clientHeight;  
+	    var bgObj = document.createElement("div");  
+	    bgObj.style.cssText = "position:absolute;left:0px;top:0px;width:"+iWidth+"px;height:"+Math.max(document.body.clientHeight, iHeight)+"px;filter:Alpha(Opacity=30);opacity:0.3;background-color:#000000;z-index:101;"; 
+	    document.body.appendChild(bgObj);  
+	     
+	    var msgObj=document.createElement("div"); 
+	    msgObj.style.cssText = "position:absolute;font:11px '宋体';top:"+(iHeight-h)/2+"px;left:"+(iWidth-w)/2+"px;width:"+w+"px;height:"+h+"px;text-align:center;border:1px solid "+bordercolor+";background-color:"+bgcolor+";padding:1px;line-height:22px;z-index:102;"; 
+	    document.body.appendChild(msgObj); 
+	     
+	    var table = document.createElement("table"); 
+	    msgObj.appendChild(table); 
+	    table.style.cssText = "margin:0px;border:0px;padding:0px;"; 
+	    table.cellSpacing = 0; 
+	    var tr = table.insertRow(-1); 
+	    var titleBar = tr.insertCell(-1); 
+	    titleBar.style.cssText = "width:100%;height:"+titleheight+"px;text-align:left;padding:3px;margin:0px;font:bold 13px '宋体';color:"+titlecolor+";border:1px solid " + bordercolor + ";cursor:move;background-color:" + titlebgcolor; 
+	    titleBar.style.paddingLeft = "10px"; 
+	    titleBar.innerHTML = title; 
+	    var moveX = 0; 
+	    var moveY = 0; 
+	    var moveTop = 0; 
+	    var moveLeft = 0; 
+	    var moveable = false; 
+	    var docMouseMoveEvent = document.onmousemove; 
+	    var docMouseUpEvent = document.onmouseup; 
+	    titleBar.onmousedown = function() { 
+	        var evt = getEvent(); 
+	        moveable = true;  
+	        moveX = evt.clientX; 
+	        moveY = evt.clientY; 
+	        moveTop = parseInt(msgObj.style.top); 
+	        moveLeft = parseInt(msgObj.style.left); 
+	         
+	        document.onmousemove = function() { 
+	            if (moveable) { 
+	                var evt = getEvent(); 
+	                var x = moveLeft + evt.clientX - moveX; 
+	                var y = moveTop + evt.clientY - moveY; 
+	                if ( x > 0 &&( x + w < iWidth) && y > 0 && (y + h < iHeight) ) { 
+	                    msgObj.style.left = x + "px"; 
+	                    msgObj.style.top = y + "px"; 
+	                } 
+	            }     
+	        }; 
+	        document.onmouseup = function () {  
+	            if (moveable) {  
+	                document.onmousemove = docMouseMoveEvent; 
+	                document.onmouseup = docMouseUpEvent; 
+	                moveable = false;  
+	                moveX = 0; 
+	                moveY = 0; 
+	                moveTop = 0; 
+	                moveLeft = 0; 
+	            }  
+	        }; 
+	    } 
+	     
+	    var closeBtn = tr.insertCell(-1); 
+	    closeBtn.style.cssText = "cursor:pointer; padding:2px;background-color:" + titlebgcolor; 
+	    closeBtn.innerHTML = "<span style='font-size:15pt; color:"+titlecolor+";'>×</span>"; 
+	    closeBtn.onclick = function(){  
+	        document.body.removeChild(bgObj);  
+	        document.body.removeChild(msgObj);  
+	    }  
+	    
+	    var msgBox = table.insertRow(-1).insertCell(-1); 
+	    msgBox.style.cssText = "font:10pt '宋体';"; 
+	    msgBox.colSpan  = 2; 
+	    msgBox.innerHTML = "</select><br/>"+questionForm+
+	    "<br/><div  align='center'><input id='updBtn'  class='buttonCss' type='button' value='确认' />&nbsp;&nbsp;<input  id='closeButton' class='buttonCss' type='button' value='取消'/></div>"; 
+	    var buttonBtn = document.getElementById("closeButton");
+	    var updBtn = document.getElementById("updBtn");
+	    buttonBtn.onclick = function(){  
+	        document.body.removeChild(bgObj);  
+	        document.body.removeChild(msgObj);  
+	    } 
+	    
+	    updBtn.onclick = function(){  
+	    	var question = new Array();
+			var answerList = new Array();
+			var answer = $("[name=content]");
+			answer.each(function(){
+				answerList.push({
+					answerId:$(this).prev().val(),
+					content:$(this).val()
+				});
+			});
+				question.push({
+					noteId:$("[name=noteId]").val(),
+				
+					
+
+					answerList:answerList
+			});
+				$.ajax({
+					type : "POST",
+					url : "noteUpdate",
+					dataType:"JSON",
+					data : JSON.stringify(question),//将对象序列化成JSON字符串  
+					contentType : 'application/json;charset=utf-8', //设置请求头信息
+					success:function(data){
+						if(data>0){
+							alert("修改成功！");
+							Note(1);
+						}
+					},error:function(){
+						alert("error!");
+					}
+				}); 
+	    	
+	    	
+	    	
+	        document.body.removeChild(bgObj);  
+	        document.body.removeChild(msgObj);  
+	    } 
+	    
+	    
+	    
+	    // 获得事件Event对象，用于兼容IE和FireFox 
+	    function getEvent() { 
+	        return window.event || arguments.callee.caller.arguments[0]; 
+	    } 
+	}
+</script>
+</html>

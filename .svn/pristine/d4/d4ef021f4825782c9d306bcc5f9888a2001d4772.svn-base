@@ -1,0 +1,10 @@
+package cn.ch.netem.service;
+
+import cn.ch.netem.pojo.Order;
+
+public interface OrderService {
+	/**
+	 * 插入一次购物的订单详情
+	 * **/
+	int insert(Order record);
+}

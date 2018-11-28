@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ch.netem.mapper.NoteMapper">
+	<resultMap id="BaseResultMap" type="Note">
+		<id column="note_id" jdbcType="INTEGER" property="noteId" />
+		<result column="note_title" jdbcType="VARCHAR"
+			property="noteTitle" />
+		<result column="note_content" jdbcType="VARCHAR"
+			property="noteContent" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="createDate" jdbcType="TIMESTAMP"
+			property="createdate" />
+		<result column="isEssence" jdbcType="INTEGER"
+			property="isessence" />
+			<result column="toexamine" jdbcType="INTEGER"
+			property="toexamine" />
+			
+
+		<association property="user" javaType="user">
+			<id property="userId" column="uid" />
+			<result property="userName" column="user_name" />
+		</association>
+		<collection property="comment" ofType="comment">
+			<id property="commentId" column="comment_id" />
+		</collection>
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value"
+										item="listItem" open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value"
+										item="listItem" open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		note_id, note_title, note_content, user_id, createDate, isEssence,Toexamine
+	</sql>
+	<select id="selectByExample" parameterType="NoteExample"
+		resultMap="BaseResultMap">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from note
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+
+
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from note
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from note
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample" parameterType="NoteExample">
+		delete from note
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="Note">
+		insert into note (note_id, note_title, note_content,
+		user_id, createDate, isEssence
+		)
+		values (#{noteId,jdbcType=INTEGER}, #{noteTitle,jdbcType=VARCHAR},
+		#{noteContent,jdbcType=VARCHAR},
+		#{userId,jdbcType=INTEGER}, #{createdate,jdbcType=TIMESTAMP}, #{isessence,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="Note">
+		insert into note
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="noteId != null">
+				note_id,
+			</if>
+			<if test="noteTitle != null">
+				note_title,
+			</if>
+			<if test="noteContent != null">
+				note_content,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="createdate != null">
+				createDate,
+			</if>
+			<if test="isessence != null">
+				isEssence,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="noteId != null">
+				#{noteId,jdbcType=INTEGER},
+			</if>
+			<if test="noteTitle != null">
+				#{noteTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="noteContent != null">
+				#{noteContent,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="createdate != null">
+				#{createdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isessence != null">
+				#{isessence,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="NoteExample"
+		resultType="java.lang.Long">
+		select count(*) from note
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update note
+		<set>
+			<if test="record.noteId != null">
+				note_id = #{record.noteId,jdbcType=INTEGER},
+			</if>
+			<if test="record.noteTitle != null">
+				note_title = #{record.noteTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.noteContent != null">
+				note_content = #{record.noteContent,jdbcType=VARCHAR},
+			</if>
+			<if test="record.userId != null">
+				user_id = #{record.userId,jdbcType=INTEGER},
+			</if>
+			<if test="record.createdate != null">
+				createDate = #{record.createdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.isessence != null">
+				isEssence = #{record.isessence,jdbcType=INTEGER},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update note
+		set note_id = #{record.noteId,jdbcType=INTEGER},
+		note_title = #{record.noteTitle,jdbcType=VARCHAR},
+		note_content = #{record.noteContent,jdbcType=VARCHAR},
+		user_id = #{record.userId,jdbcType=INTEGER},
+		createDate = #{record.createdate,jdbcType=TIMESTAMP},
+		isEssence = #{record.isessence,jdbcType=INTEGER}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="Note">
+		update note
+		<set>
+			<if test="noteTitle != null">
+				note_title = #{noteTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="noteContent != null">
+				note_content = #{noteContent,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="createdate != null">
+				createDate = #{createdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isessence != null">
+				isEssence = #{isessence,jdbcType=INTEGER},
+			</if>
+		</set>
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="Note">
+		update note
+		set note_title = #{noteTitle,jdbcType=VARCHAR},
+		note_content = #{noteContent,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		createDate = #{createdate,jdbcType=TIMESTAMP},
+		isEssence = #{isessence,jdbcType=INTEGER}
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 龙宇sql代码 -->
+
+	<select id="selectNote" parameterType="NoteExample"
+		resultMap="BaseResultMap">  <!-- 查看精华帖子 -->
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from note
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause} LIMIT 0,5
+		</if>
+		where isEssence=1
+	</select>
+
+	<insert id="Noteinsert" parameterType="Note"
+		useGeneratedKeys="true">           <!-- 发表帖子 -->
+		insert into note (note_title, note_content,
+		user_id, createDate, isEssence,toexamine
+		)
+		values ( #{note.noteTitle},
+		#{note.noteContent},
+		#{note.userId}, #{note.createdate}, #{note.isessence},#{note.toexamine}
+		)
+	</insert>
+
+	<select id="select" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">  <!-- 查看用户评论的帖子 -->
+		select
+		<include refid="Base_Column_List" />
+		from note
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectNewest" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">  <!-- 查看最新的帖子 -->
+		select
+		<include refid="Base_Column_List" />
+		from note
+		ORDER BY createDate DESC
+	</select>
+
+	<select id="selectMypost" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">  <!-- 查看我的帖子 -->
+		select
+		<include refid="Base_Column_List" />
+		from note where
+		user_id=#{id}  limit #{yeMa},#{pageSize}
+	</select>
+
+	<update id="noteUpdate" parameterType="Note"> <!-- 修改我的帖子 -->
+		update note
+		set Toexamine = #{note.toexamine}
+
+		where note_id = #{note.noteId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 删除我的帖子 -->
+	<delete id="noteDelete" parameterType="java.lang.Integer">
+		delete from note
+		where note_id = #{noteId,jdbcType=INTEGER}
+	</delete>
+
+	<select id="queryAll" resultMap="BaseResultMap">  <!-- 查看所有帖子 -->
+		SELECT
+		n.`note_id`,n.`note_title`,n.`note_content`,n.`user_id`,n.`createDate`,n.`isEssence`,n.`Toexamine`,
+		u.`user_id`,u.`user_name`
+
+		FROM `note` n,`user` u
+		WHERE n.`user_id`=u.`user_id` and  n.`Toexamine`= 1
+		ORDER BY n.isessence DESC limit #{yeMa},#{pageSize}
+	</select>
+
+	<select id="count" parameterType="int" resultType="int"> <!-- 查询总和 -->
+		select count(*) from note
+		<where>
+		<if test="noteTitle != null">
+			and  noteTitle=#{title}
+		</if>
+		    and  Toexamine=1
+		</where>
+		
+		 
+	</select>
+    
+    
+	<select id="countAjax" parameterType="String" resultType="int"> <!-- 查询总和 -->
+		select count(*) from note
+		<where>
+		<if test="title != null">
+			and note_title like concat('%',#{title},'%')
+		</if>
+		</where>
+		
+		 
+	</select>
+    
+    <select id="queryAllAjax" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">  <!-- 查看我的帖子 -->
+		SELECT
+	*
+		FROM note n
+		<where>
+		<if test="title != null">
+			AND note_title like concat('%',#{title},'%')
+		</if>
+		</where>
+		 limit #{page.begin} , #{page.pageSize}
+		
+	</select>
+    
+    <select id="mycount" parameterType="int" resultType="int"> <!-- 查询总和 -->
+		select count(*) from note
+		where user_id=#{id}
+		
+		 
+	</select>
+    
+	<!-- <select id="userName" resultType="BaseResultMap"> SELECT n.`note_id`,n.`note_title`,n.`note_content`,n.`user_id`,n.`createDate`,n.`isEssence`, 
+		u.`user_id` uid,u.`user_name`, c.`comment_id` FROM `note` n,`user` u,`comment` 
+		c WHERE n.`user_id`=u.`user_id` AND n.`note_id`=c.`note_id` ORDER BY n.isessence 
+		DESC limit #{yeMa},#{pageSize} </select> -->
+
+</mapper>

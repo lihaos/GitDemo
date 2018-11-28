@@ -1,0 +1,42 @@
+package cn.ch.netem.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import cn.ch.netem.mapper.ProductMapper;
+import cn.ch.netem.pojo.Product;
+import cn.ch.netem.service.ProductService;
+
+
+@Service
+public class ProductServiceImpl implements ProductService{
+    @Autowired
+    private ProductMapper productMapper;
+
+	@Override
+	public List<Product> selectAll(int page,int pagename) {
+		page=(page-1)*pagename;
+		return productMapper.selectAll(page, pagename);
+	}
+
+	@Override
+	public Product selectByPrimaryKey(Integer productId) {
+		// TODO Auto-generated method stub
+		return productMapper.selectByPrimaryKey(productId);
+	}
+
+	public int deleteProduct() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int countProduct() {
+		// TODO Auto-generated method stub
+		return productMapper.countProduct();
+	}
+    
+    
+}

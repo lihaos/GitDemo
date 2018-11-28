@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ch.netem.mapper.CommentMapper">
+  <resultMap id="BaseResultMap" type="Comment">
+    <id column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <result column="note_id" jdbcType="INTEGER" property="noteId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="createdate" jdbcType="TIMESTAMP" property="createdate" />
+    
+    <collection property="note" ofType="note">
+			<id property="noteTitle" column="note_title" />
+			<id property="createdate" column="createDate" />
+		</collection>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    comment_id, note_id, user_id, content, createdate
+  </sql>
+  <select id="selectByExample" parameterType="CommentExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from comment
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="CommentExample">
+    delete from comment
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <!-- 添加 -->
+  <insert id="insert" parameterType="Comment" useGeneratedKeys="true">
+    insert into comment (comment_id, note_id, user_id, 
+      content, createdate)
+    values (#{commentId,jdbcType=INTEGER}, #{noteId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{content,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="Comment">
+    insert into comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="noteId != null">
+        note_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="createdate != null">
+        createdate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=INTEGER},
+      </if>
+      <if test="noteId != null">
+        #{noteId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="CommentExample" resultType="java.lang.Long">
+    select count(*) from comment
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update comment
+    <set>
+      <if test="record.commentId != null">
+        comment_id = #{record.commentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.noteId != null">
+        note_id = #{record.noteId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdate != null">
+        createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update comment
+    set comment_id = #{record.commentId,jdbcType=INTEGER},
+      note_id = #{record.noteId,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=VARCHAR},
+      createdate = #{record.createdate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="Comment">
+    update comment
+    <set>
+      <if test="noteId != null">
+        note_id = #{noteId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Comment">
+    update comment
+    set note_id = #{noteId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      createdate = #{createdate,jdbcType=TIMESTAMP}
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+  
+   <!-- 查询评论 -->
+    <select id="selectComment" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from comment
+    where note_id = #{note_id}
+  </select>
+   
+   
+   
+  <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+ 
+    
+       SELECT n.`note_title`,n.`createDate`,c.`comment_id`,c.`content`
+    FROM note n,COMMENT c
+    WHERE n.`note_id`=c.`note_id`  AND c.note_id=#{id}  limit #{yeMa},#{pageSize}
+    
+  </select>
+  
+   <select id="myselect" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+ 
+    
+       SELECT n.`note_title`,n.`createDate`,c.`comment_id`,c.`content`
+    FROM note n,COMMENT c
+    WHERE n.`note_id`=c.`note_id`  AND c.user_id=#{id}  limit #{yeMa},#{pageSize}
+    
+  </select>
+  
+  <delete id="CommentDelete" parameterType="java.lang.Integer">
+    delete from comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </delete>
+  
+   <select id="count"  resultType="int"> <!-- 我的评论总条数  -->
+    SELECT COUNT(*)
+    FROM note n,COMMENT c
+    WHERE n.`note_id`=c.`note_id` AND   c.user_id = #{id}
+  </select>
+  
+   <select id="Notecount"  resultType="int"> <!-- 查询出该文章下评论的总数 -->
+    SELECT COUNT(*)
+    FROM note n,COMMENT c
+    WHERE n.`note_id`=c.`note_id` AND   c.note_id = #{id}
+  </select>
+  
+  
+  <delete id="deletePostComment" parameterType="java.lang.Integer">
+    delete from comment
+    where note_id = #{noteId,jdbcType=INTEGER}
+  </delete>
+  
+</mapper>
